@@ -7,6 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class ProbabilityTest {
+
+    private Probability expected;
+
     @Test
     @DisplayName("should throw InvalidRangeException when the provided probability is less than 0.")
     void invalidRangeExceptionForLessThanZero() {
@@ -31,6 +34,8 @@ class ProbabilityTest {
     @DisplayName("should give the complement of the given probability")
     void complement() {
         Probability probability = new Probability(0.5);
-        assertEquals(0.5, probability.complement());
+
+        expected = new Probability(0.5);
+        assertEquals(expected, probability.complement());
     }
 }
