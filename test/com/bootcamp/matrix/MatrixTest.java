@@ -146,7 +146,7 @@ class MatrixTest {
     }
 
     @Test
-    void ShouldReturnTheAdditionOfTheGivenMatrices() throws Exception {
+    void addShouldReturnTheAdditionOfTheGivenMatrices() throws Exception {
         PositiveInteger rowSize = PositiveInteger.create(2);
         PositiveInteger columnSize = PositiveInteger.create(3);
 
@@ -172,5 +172,27 @@ class MatrixTest {
         addition.setRow(rowNumber, 5, 7, 9);
 
         assertEquals(addition, matrix1.add(matrix2));
+    }
+
+    @Test
+    void transposeShouldReturnTheTransposeOfTheMatrix() throws NegativeDimensionException {
+        PositiveInteger rowSize = PositiveInteger.create(2);
+        PositiveInteger columnSize = PositiveInteger.create(2);
+
+        Matrix matrix = new Matrix(rowSize, columnSize);
+
+        PositiveInteger rowNumber = PositiveInteger.create(0);
+        matrix.setRow(rowNumber, 1, 2);
+        rowNumber = PositiveInteger.create(1);
+        matrix.setRow(rowNumber, 4, 5);
+
+        Matrix transposeMatrix = new Matrix(columnSize, rowSize);
+
+        rowNumber = PositiveInteger.create(0);
+        transposeMatrix.setRow(rowNumber, 1, 4);
+        rowNumber = PositiveInteger.create(1);
+        transposeMatrix.setRow(rowNumber, 2, 5);
+
+        assertEquals(transposeMatrix.getMatrix(), matrix.transpose().getMatrix());
     }
 }

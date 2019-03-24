@@ -1,5 +1,7 @@
 package com.bootcamp.matrix;
 
+import com.bootcamp.day1.NegativeDimensionException;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -80,5 +82,18 @@ class Matrix {
         return Objects.equals(row, matrix1.row) &&
                 Objects.equals(column, matrix1.column) &&
                 Objects.equals(matrix, matrix1.matrix);
+    }
+
+    Matrix transpose() throws NegativeDimensionException {
+        Matrix transpose = new Matrix(this.column, this.row);
+
+        for (int rowNumber = 0; rowNumber < this.column.getValue(); rowNumber++) {
+            for (int columnNumber = 0; columnNumber < this.row.getValue(); columnNumber++) {
+                Integer element = this.matrix.get(columnNumber).get(rowNumber);
+                transpose.set(PositiveInteger.create(rowNumber), PositiveInteger.create(columnNumber), element);
+            }
+        }
+
+        return transpose;
     }
 }
