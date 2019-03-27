@@ -4,16 +4,16 @@ import java.util.Map;
 
 abstract class Notifiable {
     private Observer notifier;
-    private Notification information;
+    private Notification notification;
 
-    Notifiable(Observer notifier, Notification information) {
+    Notifiable(Observer notifier, Notification notification) {
         this.notifier = notifier;
-        this.information = information;
+        this.notification = notification;
     }
 
-    void inform(Map<Token, Car> cars, ParkingId ID) {
+    void notify(Map<Token, Car> cars, ParkingId ID) {
         if (this.isNotifiable(cars))
-            this.notifier.notify(this.information, ID);
+            this.notifier.notify(this.notification, ID);
     }
 
     abstract boolean isNotifiable(Map<Token, Car> cars);

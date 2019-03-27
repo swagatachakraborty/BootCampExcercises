@@ -63,7 +63,8 @@ class ParkingLotTest {
     @Test
     void shouldCallNotifyForFullParking() throws ParkingLotFullException {
         MockAttendant mockAttendant = new MockAttendant();
-        ParkingLot parkingLot = new ParkingLot(2);
+        int capacity = 2;
+        ParkingLot parkingLot = new ParkingLot(capacity);
         parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant, parkingLot.CAPACITY));
 
         parkingLot.park(new Car());
@@ -77,8 +78,8 @@ class ParkingLotTest {
         Car car1 = new Car();
         Car car2 = new Car();
         MockAttendant mockAttendant = new MockAttendant();
-        ParkingLot parkingLot = new ParkingLot(2);
-
+        int capacity = 2;
+        ParkingLot parkingLot = new ParkingLot(capacity);
         parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant, parkingLot.CAPACITY));
 
         Token tokenForCar1 = parkingLot.park(car1);
@@ -86,6 +87,33 @@ class ParkingLotTest {
         parkingLot.unPark(tokenForCar1);
 
         assertTrue(mockAttendant.isNotifyCalled);
+    }
+
+    @Test
+    void shouldCallNotifyOfAssistantWhileParkingACar() {
+        MockAssistant mockAssistant = new MockAssistant();
+        int capacity = 2;
+        ParkingLot parkingLot = new ParkingLot(capacity);
+        parkingLot.addNotifier(new ParkCarNotifier(mockAssistant));
+
+        parkingLot.park(new Car());
+
+        assertTrue(mockAssistant.isNotifyCalled);
+    }
+
+    @Test
+    void shouldCallNotifyOfAssistantWhileUnParkingACar() {
+        MockAssistant mockAssistant = new MockAssistant();
+        int capacity = 2;
+        ParkingLot parkingLot = new ParkingLot(capacity);
+        parkingLot.addNotifier(new UnParkCarNotifier(mockAssistant));
+
+        Car car = new Car();
+        Token token = parkingLot.park(car);
+        mockAssistant.isNotifyCalled = false; // reset isNotifyCalled to false after parking.
+        parkingLot.unPark(token);
+
+        assertTrue(mockAssistant.isNotifyCalled);
     }
 
     @Test
@@ -99,6 +127,16 @@ class ParkingLotTest {
 }
 
 class MockAttendant extends Attendant {
+    boolean isNotifyCalled = false;
+
+    @Override
+    public void notify(Notification notification, ParkingId id) {
+        this.isNotifyCalled = true;
+    }
+}
+
+
+class MockAssistant extends Assistant {
     boolean isNotifyCalled = false;
 
     @Override

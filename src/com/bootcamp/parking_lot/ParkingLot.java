@@ -20,7 +20,7 @@ class ParkingLot {
 
     private void informNotifiers() {
         for (Notifiable notifier : this.notifiable) {
-            notifier.inform(this.cars, this.ID);
+            notifier.notify(this.cars, this.ID);
         }
     }
 
