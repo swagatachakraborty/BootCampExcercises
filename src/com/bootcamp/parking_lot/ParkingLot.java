@@ -25,10 +25,17 @@ class ParkingLot {
         return this.cars.add(car);
     }
 
-    boolean unPark(Car car) {
+    Car unPark(Integer carId) {
         if (this.cars.size() == this.capacity)
             this.attendant.notifyWhenFullParkingGetsFree(this.id);
 
-        return this.cars.remove(car);
+        for (Car car : cars) {
+            if(car.getId().equals(carId)) {
+                cars.remove(car);
+                return car;
+            }
+        }
+
+        return null;
     }
 }

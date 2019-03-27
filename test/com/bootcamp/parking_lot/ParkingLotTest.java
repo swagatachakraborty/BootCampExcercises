@@ -3,8 +3,7 @@ package com.bootcamp.parking_lot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ParkingLotTest {
     private ParkingLot parkingLot1, parkingLot2;
@@ -42,16 +41,16 @@ class ParkingLotTest {
     }
 
     @Test
-    void shouldReturnTrueAfterUnparkingACar() {
+    void shouldReturnTheCarOfTheSameIdWhileUnparkingACar() {
         Car car1 = new Car();
         parkingLot1.park(car1);
-        assertTrue(parkingLot1.unPark(car1));
+        assertEquals(car1, parkingLot1.unPark(car1.getId()));
     }
 
     @Test
     void shouldReturnFalseAfterUnparkingACar() {
         Car car1 = new Car();
-        assertFalse(parkingLot1.unPark(car1));
+        assertNull(parkingLot1.unPark(car1.getId()));
     }
 
     @Test
@@ -63,7 +62,7 @@ class ParkingLotTest {
 
         parkingLot.park(car1);
         parkingLot.park(car2);
-        parkingLot.unPark(car1);
+        parkingLot.unPark(car1.getId());
 
         assertTrue(mockAttendant.isCalledForUnparking);
     }
