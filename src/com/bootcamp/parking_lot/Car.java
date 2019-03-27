@@ -8,8 +8,4 @@ class Car {
         this.id = latestCarId;
         latestCarId++;
     }
-
-    Integer getId() {
-        return this.id;
-    }
 }

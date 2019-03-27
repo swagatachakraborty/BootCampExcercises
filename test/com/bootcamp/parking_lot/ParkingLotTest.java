@@ -7,30 +7,30 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ParkingLotTest {
     private ParkingLot parkingLot1, parkingLot2;
-    private Attendant attendant;
 
     @BeforeEach
     void setUp() {
-        attendant = new Attendant();
+        Attendant attendant = new Attendant();
         parkingLot1 = new ParkingLot(2, attendant);
         parkingLot2 = new ParkingLot(2, attendant);
     }
 
     @Test
-    void shouldReturnTrueAfterParkingACar() {
+    void shouldReturnTokenWhileParkingCarToParkingLot() throws ParkingLotFullException {
         Car car = new Car();
-        assertTrue(parkingLot1.park(car));
+        Token token = parkingLot1.park(car);
+        assertEquals(Token.class, token.getClass());
     }
 
     @Test
-    void shouldReturnFalseIfParkingACarToAParkingLOtWhichIsFull() {
+    void shouldThrowExceptionIfParkingACarToAParkingLOtWhichIsFull() throws ParkingLotFullException {
         parkingLot1.park(new Car());
         parkingLot1.park(new Car());
-        assertFalse(parkingLot1.park(new Car()));
+        assertThrows(ParkingLotFullException.class, () -> parkingLot1.park(new Car()));
     }
 
     @Test
-    void shouldCallNotifyForFullParkingMethod() {
+    void shouldCallNotifyForFullParkingMethod() throws ParkingLotFullException {
         MockAttendant mockAttendant = new MockAttendant();
         parkingLot1 = new ParkingLot(2, mockAttendant);
 
@@ -41,30 +41,38 @@ class ParkingLotTest {
     }
 
     @Test
-    void shouldReturnTheCarOfTheSameIdWhileUnparkingACar() {
+    void shouldReturnTheCarOfTheSameIdWhileUnparkingACar() throws ParkingLotFullException {
         Car car1 = new Car();
-        parkingLot1.park(car1);
-        assertEquals(car1, parkingLot1.unPark(car1.getId()));
+        Token token = parkingLot1.park(car1);
+        assertEquals(car1, parkingLot1.unPark(token));
     }
 
     @Test
     void shouldReturnFalseAfterUnparkingACar() {
-        Car car1 = new Car();
-        assertNull(parkingLot1.unPark(car1.getId()));
+        assertNull(parkingLot1.unPark(new Token()));
     }
 
     @Test
-    void shouldNotifyWhenFullParkingGetsFree() {
+    void shouldNotifyWhenFullParkingGetsFree() throws ParkingLotFullException {
         Car car1 = new Car();
         Car car2 = new Car();
         MockAttendant mockAttendant = new MockAttendant();
         ParkingLot parkingLot = new ParkingLot(2, mockAttendant);
 
-        parkingLot.park(car1);
+        Token tokenForCar1 = parkingLot.park(car1);
         parkingLot.park(car2);
-        parkingLot.unPark(car1.getId());
+        parkingLot.unPark(tokenForCar1);
 
         assertTrue(mockAttendant.isCalledForUnparking);
+    }
+
+    @Test
+    void name() throws ParkingLotFullException {
+        Display display = Display.create();
+        parkingLot1.park(new Car());
+        parkingLot2.park(new Car());
+        parkingLot2.park(new Car());
+        System.out.println(display.toString());
     }
 }
 
@@ -73,12 +81,12 @@ class MockAttendant extends Attendant {
     boolean isCalledForFullParking = false;
 
     @Override
-    void notifyForFullParking(Integer parkingLotId) {
+    void notifyForFullParking(ParkingId parkingLotId) {
         this.isCalledForFullParking = true;
     }
 
     @Override
-    void notifyWhenFullParkingGetsFree(Integer parkingLotId) {
+    void notifyForParkingLotAvailable(ParkingId parkingLotId) {
         this.isCalledForUnparking = true;
     }
 }

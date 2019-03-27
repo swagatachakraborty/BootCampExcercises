@@ -1,41 +1,34 @@
 package com.bootcamp.parking_lot;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 class ParkingLot {
-    private static Integer latestId = 1;
-    private Set<Car> cars;
+    private Map<Token, Car> cars;
     private Attendant attendant;
     private Integer capacity;
-    private Integer id;
+    private ParkingId id;
 
     ParkingLot(Integer capacity, Attendant attendant) {
         this.capacity = capacity;
-        this.cars = new HashSet<>();
+        this.cars = new HashMap<>();
         this.attendant = attendant;
-        this.id = latestId;
-        latestId++;
+        this.id = new ParkingId();
     }
 
-    boolean park(Car car) {
-        if (this.cars.size() == capacity) return false;
-        if (this.cars.size() == capacity - 1) this.attendant.notifyForFullParking(this.id);
+    Token park(Car car) throws ParkingLotFullException {
+        if (this.cars.size() == capacity) throw new ParkingLotFullException();
 
-        return this.cars.add(car);
+        this.attendant.notifyParking(this.id, capacity, this.cars.size());
+
+        Token token = new Token();
+        this.cars.put(token, car);
+        return token;
     }
 
-    Car unPark(Integer carId) {
-        if (this.cars.size() == this.capacity)
-            this.attendant.notifyWhenFullParkingGetsFree(this.id);
+    Car unPark(Token token) {
+        this.attendant.notifyUnparking(this.id, capacity, this.cars.size());
 
-        for (Car car : cars) {
-            if(car.getId().equals(carId)) {
-                cars.remove(car);
-                return car;
-            }
-        }
-
-        return null;
+        return cars.remove(token);
     }
 }
