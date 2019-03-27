@@ -2,10 +2,10 @@ package com.bootcamp.parking_lot;
 
 class Token {
     private static Integer latestId = 0;
-    private Integer id;
+    private final Integer ID;
 
     Token() {
-        this.id = createToken();
+        this.ID = createToken();
     }
 
     private static Integer createToken() {

@@ -1,34 +1,54 @@
 package com.bootcamp.parking_lot;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 class ParkingLot {
     private Map<Token, Car> cars;
-    private Attendant attendant;
-    private Integer capacity;
-    private ParkingId id;
+    private Set<Notifiable> notifiable;
+    final Integer CAPACITY;
+    final ParkingId ID;
 
-    ParkingLot(Integer capacity, Attendant attendant) {
-        this.capacity = capacity;
+    ParkingLot(Integer CAPACITY) {
+        this.notifiable = new HashSet<>();
+        this.CAPACITY = CAPACITY;
         this.cars = new HashMap<>();
-        this.attendant = attendant;
-        this.id = new ParkingId();
+        this.ID = new ParkingId();
+    }
+
+    private void informNotifiers() {
+        for (Notifiable notifier : this.notifiable) {
+            notifier.inform(this.cars);
+        }
     }
 
     Token park(Car car) throws ParkingLotFullException {
-        if (this.cars.size() == capacity) throw new ParkingLotFullException();
-
-        this.attendant.notifyParking(this.id, capacity, this.cars.size());
+        if (this.cars.size() == this.CAPACITY) throw new ParkingLotFullException();
 
         Token token = new Token();
         this.cars.put(token, car);
+
+        this.informNotifiers();
+
         return token;
     }
 
-    Car unPark(Token token) {
-        this.attendant.notifyUnparking(this.id, capacity, this.cars.size());
+    Car unPark(Token token) throws NoSuchTokenException {
+        if (!cars.containsKey(token)) throw new NoSuchTokenException();
 
-        return cars.remove(token);
+        Car unParkCar = cars.remove(token);
+        this.informNotifiers();
+
+        return unParkCar;
+    }
+
+    void addNotifier(Notifiable notifier) {
+        this.notifiable.add(notifier);
+    }
+
+    void removeNotifier(Notifiable notifier) {
+        this.notifiable.remove(notifier);
     }
 }
