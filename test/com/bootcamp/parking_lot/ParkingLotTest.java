@@ -15,23 +15,23 @@ class ParkingLotTest {
         parkingLot2 = new ParkingLot(capacity);
 
         Attendant attendant = new Attendant();
-        Assistance assistance = new Assistance();
+        Assistant assistant = new Assistant();
 
-        ParkingFullNotification parkingFullNotification = new ParkingFullNotification(attendant, capacity);
-        ParkingLotGetsSpaceNotification parkingLotGetsSpaceNotification = new ParkingLotGetsSpaceNotification(attendant, capacity);
+        ParkingFullNotifier parkingFullNotifier = new ParkingFullNotifier(attendant, capacity);
+        SingleSpaceNotifier singleSpaceNotifier = new SingleSpaceNotifier(attendant, capacity);
 
-        ParkCarNotification parkCarNotification = new ParkCarNotification(assistance);
-        UnParkCarNotification unParkCarNotification = new UnParkCarNotification(assistance);
+        ParkCarNotifier parkCarNotifier = new ParkCarNotifier(assistant);
+        UnParkCarNotifier unParkCarNotifier = new UnParkCarNotifier(assistant);
 
-        parkingLot1.addNotifier(parkingFullNotification);
-        parkingLot1.addNotifier(parkingLotGetsSpaceNotification);
-        parkingLot1.addNotifier(parkCarNotification);
-        parkingLot1.addNotifier(unParkCarNotification);
+        parkingLot1.addNotifier(parkingFullNotifier);
+        parkingLot1.addNotifier(singleSpaceNotifier);
+        parkingLot1.addNotifier(parkCarNotifier);
+        parkingLot1.addNotifier(unParkCarNotifier);
 
-        parkingLot2.addNotifier(parkingFullNotification);
-        parkingLot2.addNotifier(parkingLotGetsSpaceNotification);
-        parkingLot2.addNotifier(parkCarNotification);
-        parkingLot2.addNotifier(unParkCarNotification);
+        parkingLot2.addNotifier(parkingFullNotifier);
+        parkingLot2.addNotifier(singleSpaceNotifier);
+        parkingLot2.addNotifier(parkCarNotifier);
+        parkingLot2.addNotifier(unParkCarNotifier);
     }
 
     @Test
@@ -64,7 +64,7 @@ class ParkingLotTest {
     void shouldCallNotifyForFullParking() throws ParkingLotFullException {
         MockAttendant mockAttendant = new MockAttendant();
         ParkingLot parkingLot = new ParkingLot(2);
-        parkingLot.addNotifier(new ParkingFullNotification(mockAttendant, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant, parkingLot.CAPACITY));
 
         parkingLot.park(new Car());
         parkingLot.park(new Car());
@@ -79,7 +79,7 @@ class ParkingLotTest {
         MockAttendant mockAttendant = new MockAttendant();
         ParkingLot parkingLot = new ParkingLot(2);
 
-        parkingLot.addNotifier(new ParkingFullNotification(mockAttendant, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant, parkingLot.CAPACITY));
 
         Token tokenForCar1 = parkingLot.park(car1);
         parkingLot.park(car2);
@@ -88,21 +88,21 @@ class ParkingLotTest {
         assertTrue(mockAttendant.isNotifyCalled);
     }
 
-//    @Test
-//    void name() throws ParkingLotFullException {
-//        Display display = Display.create();
-//        parkingLot1.park(new Car());
-//        parkingLot2.park(new Car());
-//        parkingLot2.park(new Car());
-//        System.out.println(display.toString());
-//    }
+    @Test
+    void displayShouldPrintTheCurrentStatusOfParkingLotsToTheConsole() throws ParkingLotFullException {
+        Display display = Display.create();
+        parkingLot1.park(new Car());
+        parkingLot2.park(new Car());
+        parkingLot2.park(new Car());
+        System.out.println(display.toString());
+    }
 }
 
 class MockAttendant extends Attendant {
     boolean isNotifyCalled = false;
 
     @Override
-    public void inform(String notification) {
-        isNotifyCalled = true;
+    public void notify(Notification notification, ParkingId id) {
+        this.isNotifyCalled = true;
     }
 }

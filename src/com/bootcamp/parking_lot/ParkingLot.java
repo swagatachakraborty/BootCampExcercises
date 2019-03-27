@@ -20,7 +20,7 @@ class ParkingLot {
 
     private void informNotifiers() {
         for (Notifiable notifier : this.notifiable) {
-            notifier.inform(this.cars);
+            notifier.inform(this.cars, this.ID);
         }
     }
 
@@ -46,9 +46,5 @@ class ParkingLot {
 
     void addNotifier(Notifiable notifier) {
         this.notifiable.add(notifier);
-    }
-
-    void removeNotifier(Notifiable notifier) {
-        this.notifiable.remove(notifier);
     }
 }

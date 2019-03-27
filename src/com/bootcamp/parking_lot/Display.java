@@ -12,8 +12,7 @@ public class Display {
     }
 
     static Display create() {
-        if (instance == null)
-            instance = new Display();
+        if (instance == null) instance = new Display();
         return instance;
     }
 
