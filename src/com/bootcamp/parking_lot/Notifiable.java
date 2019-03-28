@@ -1,7 +1,5 @@
 package com.bootcamp.parking_lot;
 
-import java.util.Map;
-
 abstract class Notifiable {
     private Observer notifier;
     private Notification notification;
@@ -11,12 +9,12 @@ abstract class Notifiable {
         this.notification = notification;
     }
 
-    void notify(Map<Token, Car> cars, ParkingId ID) {
-        if (this.isNotifiable(cars))
+    void notify(Integer carSize, Integer capacity, ParkingId ID) {
+        if (this.isNotifiable(carSize, capacity))
             this.notifier.notify(this.notification, ID);
     }
 
-    abstract boolean isNotifiable(Map<Token, Car> cars);
+    abstract boolean isNotifiable(Integer carSize, Integer capacity);
 
 }
 
@@ -31,9 +29,9 @@ class ParkCarNotifier extends Notifiable {
     }
 
     @Override
-    boolean isNotifiable(Map<Token, Car> cars) {
-        boolean isCarParked = cars.size() > this.lastCarCount;
-        this.lastCarCount = cars.size();
+    boolean isNotifiable(Integer carSize, Integer capacity) {
+        boolean isCarParked = carSize > this.lastCarCount;
+        this.lastCarCount = carSize;
         return isCarParked;
     }
 }
@@ -41,32 +39,28 @@ class ParkCarNotifier extends Notifiable {
 
 class ParkingFullNotifier extends Notifiable {
     private static final Notification notification = new ParkingFullNotification();
-    private Integer capacity;
 
-    ParkingFullNotifier(Observer notifier, Integer capacity) {
+    ParkingFullNotifier(Observer notifier) {
         super(notifier, notification);
-        this.capacity = capacity;
     }
 
     @Override
-    boolean isNotifiable(Map<Token, Car> cars) {
-        return cars.size() == this.capacity;
+    boolean isNotifiable(Integer carSize, Integer capacity) {
+        return carSize.equals(capacity);
     }
 }
 
 
 class SingleSpaceNotifier extends Notifiable {
     private static final Notification notification = new SingleParkingSpaceNotification();
-    private Integer capacity;
 
-    SingleSpaceNotifier(Observer notifier, Integer capacity) {
+    SingleSpaceNotifier(Observer notifier) {
         super(notifier, notification);
-        this.capacity = capacity;
     }
 
     @Override
-    boolean isNotifiable(Map<Token, Car> cars) {
-        return cars.size() == this.capacity - 1;
+    boolean isNotifiable(Integer carSize, Integer capacity) {
+        return carSize.equals(capacity - 1);
     }
 }
 
@@ -81,41 +75,41 @@ class UnParkCarNotifier extends Notifiable {
     }
 
     @Override
-    boolean isNotifiable(Map<Token, Car> cars) {
-        boolean isCarParked = cars.size() < this.lastCarCount;
-        this.lastCarCount = cars.size();
+    boolean isNotifiable(Integer carSize, Integer capacity) {
+        boolean isCarParked = carSize < this.lastCarCount;
+        this.lastCarCount = carSize;
         return isCarParked;
     }
 }
 
 
-class EightyPercentOrMoreSpaceNotifier extends Notifiable{
+class EightyPercentOrMoreSpaceNotifier extends Notifiable {
     private static final Notification notification = new EightyPercentOrMoreSpaceNotification();
-    private Integer capacity;
+    private double ratio;
 
-    EightyPercentOrMoreSpaceNotifier(Observer notifier, int capacity) {
+    EightyPercentOrMoreSpaceNotifier(Observer notifier) {
         super(notifier, notification);
-        this.capacity = capacity;
+        this.ratio = 0.2;
     }
 
     @Override
-    boolean isNotifiable(Map<Token, Car> cars) {
-        return (double)cars.size()/capacity <= 0.2;
+    boolean isNotifiable(Integer carSize, Integer capacity) {
+        return (double) carSize / capacity <= this.ratio;
     }
 }
 
 
-class TwentyPercentOrLessSpaceNotifier extends Notifiable{
+class TwentyPercentOrLessSpaceNotifier extends Notifiable {
     private static final Notification notification = new TwentyPercentOrLessSpaceNotification();
-    private Integer capacity;
+    private final double ratio;
 
-    TwentyPercentOrLessSpaceNotifier(Observer notifier, int capacity) {
+    TwentyPercentOrLessSpaceNotifier(Observer notifier) {
         super(notifier, notification);
-        this.capacity = capacity;
+        this.ratio = 0.8;
     }
 
     @Override
-    boolean isNotifiable(Map<Token, Car> cars) {
-        return (double)cars.size()/capacity >= 0.8;
+    boolean isNotifiable(Integer carSize, Integer capacity) {
+        return (double) carSize / capacity >= this.ratio;
     }
 }

@@ -18,14 +18,14 @@ class ParkingLotTest {
         Observer assistant = new Assistant();
         Observer civicBody = new CivicBody();
 
-        Notifiable parkingFullNotifier = new ParkingFullNotifier(attendant, capacity);
-        Notifiable singleSpaceNotifier = new SingleSpaceNotifier(attendant, capacity);
-        Notifiable eightyPercentOrMoreSpaceNotifier = new EightyPercentOrMoreSpaceNotifier(attendant, capacity);
+        Notifiable parkingFullNotifier = new ParkingFullNotifier(attendant);
+        Notifiable singleSpaceNotifier = new SingleSpaceNotifier(attendant);
+        Notifiable eightyPercentOrMoreSpaceNotifier = new EightyPercentOrMoreSpaceNotifier(attendant);
 
         Notifiable parkCarNotifier = new ParkCarNotifier(assistant);
         Notifiable unParkCarNotifier = new UnParkCarNotifier(assistant);
 
-        Notifiable twentyPercentOrLessSpaceNotifier = new TwentyPercentOrLessSpaceNotifier(civicBody, capacity);
+        Notifiable twentyPercentOrLessSpaceNotifier = new TwentyPercentOrLessSpaceNotifier(civicBody);
 
         parkingLot1.addNotifier(parkingFullNotifier);
         parkingLot1.addNotifier(singleSpaceNotifier);
@@ -73,7 +73,7 @@ class ParkingLotTest {
         MockAttendant mockAttendant = new MockAttendant();
         int capacity = 2;
         ParkingLot parkingLot = new ParkingLot(capacity);
-        parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant));
 
         parkingLot.park(new Car());
         parkingLot.park(new Car());
@@ -88,7 +88,7 @@ class ParkingLotTest {
         MockAttendant mockAttendant = new MockAttendant();
         int capacity = 2;
         ParkingLot parkingLot = new ParkingLot(capacity);
-        parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new ParkingFullNotifier(mockAttendant));
 
         Token tokenForCar1 = parkingLot.park(car1);
         parkingLot.park(car2);
@@ -129,7 +129,7 @@ class ParkingLotTest {
         MockAttendant mockAttendant = new MockAttendant();
         int capacity = 10;
         ParkingLot parkingLot = new ParkingLot(capacity);
-        parkingLot.addNotifier(new EightyPercentOrMoreSpaceNotifier(mockAttendant, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new EightyPercentOrMoreSpaceNotifier(mockAttendant));
 
         Car car = new Car();
         parkingLot.park(car);
@@ -143,7 +143,7 @@ class ParkingLotTest {
         MockAttendant mockAttendant = new MockAttendant();
         int capacity = 10;
         ParkingLot parkingLot = new ParkingLot(capacity);
-        parkingLot.addNotifier(new EightyPercentOrMoreSpaceNotifier(mockAttendant, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new EightyPercentOrMoreSpaceNotifier(mockAttendant));
 
         Car car = new Car();
         parkingLot.park(car);
@@ -157,7 +157,7 @@ class ParkingLotTest {
         MockCivicBody mockCivicBody = new MockCivicBody();
         int capacity = 10;
         ParkingLot parkingLot = new ParkingLot(capacity);
-        parkingLot.addNotifier(new TwentyPercentOrLessSpaceNotifier(mockCivicBody, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new TwentyPercentOrLessSpaceNotifier(mockCivicBody));
 
         parkingLot.park(new Car());
         parkingLot.park(new Car());
@@ -176,7 +176,7 @@ class ParkingLotTest {
         MockCivicBody mockCivicBody = new MockCivicBody();
         int capacity = 4;
         ParkingLot parkingLot = new ParkingLot(capacity);
-        parkingLot.addNotifier(new TwentyPercentOrLessSpaceNotifier (mockCivicBody, parkingLot.CAPACITY));
+        parkingLot.addNotifier(new TwentyPercentOrLessSpaceNotifier (mockCivicBody));
 
         parkingLot.park(new Car());
         parkingLot.park(new Car());

@@ -6,22 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 class ParkingLot {
+    private final Integer CAPACITY;
+    private final ParkingId ID;
     private Map<Token, Car> cars;
     private Set<Notifiable> notifiers;
-    final Integer CAPACITY;
-    final ParkingId ID;
 
-    ParkingLot(Integer CAPACITY) {
+    ParkingLot(Integer capacity) {
         this.notifiers = new HashSet<>();
-        this.CAPACITY = CAPACITY;
+        this.CAPACITY = capacity;
         this.cars = new HashMap<>();
         this.ID = new ParkingId();
-    }
-
-    private void informNotifiers() {
-        for (Notifiable notifier : this.notifiers) {
-            notifier.notify(this.cars, this.ID);
-        }
     }
 
     Token park(Car car) throws ParkingLotFullException {
@@ -46,5 +40,11 @@ class ParkingLot {
 
     void addNotifier(Notifiable notifier) {
         this.notifiers.add(notifier);
+    }
+
+    private void informNotifiers() {
+        for (Notifiable notifier : this.notifiers) {
+            notifier.notify(this.cars.size(), this.CAPACITY, this.ID);
+        }
     }
 }
