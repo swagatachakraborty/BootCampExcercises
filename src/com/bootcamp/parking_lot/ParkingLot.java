@@ -7,19 +7,19 @@ import java.util.Set;
 
 class ParkingLot {
     private Map<Token, Car> cars;
-    private Set<Notifiable> notifiable;
+    private Set<Notifiable> notifiers;
     final Integer CAPACITY;
     final ParkingId ID;
 
     ParkingLot(Integer CAPACITY) {
-        this.notifiable = new HashSet<>();
+        this.notifiers = new HashSet<>();
         this.CAPACITY = CAPACITY;
         this.cars = new HashMap<>();
         this.ID = new ParkingId();
     }
 
     private void informNotifiers() {
-        for (Notifiable notifier : this.notifiable) {
+        for (Notifiable notifier : this.notifiers) {
             notifier.notify(this.cars, this.ID);
         }
     }
@@ -45,6 +45,6 @@ class ParkingLot {
     }
 
     void addNotifier(Notifiable notifier) {
-        this.notifiable.add(notifier);
+        this.notifiers.add(notifier);
     }
 }

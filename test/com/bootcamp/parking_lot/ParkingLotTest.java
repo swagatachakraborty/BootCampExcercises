@@ -14,24 +14,32 @@ class ParkingLotTest {
         parkingLot1 = new ParkingLot(capacity);
         parkingLot2 = new ParkingLot(capacity);
 
-        Attendant attendant = new Attendant();
-        Assistant assistant = new Assistant();
+        Observer attendant = new Attendant();
+        Observer assistant = new Assistant();
+        Observer civicBody = new CivicBody();
 
-        ParkingFullNotifier parkingFullNotifier = new ParkingFullNotifier(attendant, capacity);
-        SingleSpaceNotifier singleSpaceNotifier = new SingleSpaceNotifier(attendant, capacity);
+        Notifiable parkingFullNotifier = new ParkingFullNotifier(attendant, capacity);
+        Notifiable singleSpaceNotifier = new SingleSpaceNotifier(attendant, capacity);
+        Notifiable eightyPercentOrMoreSpaceNotifier = new EightyPercentOrMoreSpaceNotifier(attendant, capacity);
 
-        ParkCarNotifier parkCarNotifier = new ParkCarNotifier(assistant);
-        UnParkCarNotifier unParkCarNotifier = new UnParkCarNotifier(assistant);
+        Notifiable parkCarNotifier = new ParkCarNotifier(assistant);
+        Notifiable unParkCarNotifier = new UnParkCarNotifier(assistant);
+
+        Notifiable twentyPercentOrLessSpaceNotifier = new TwentyPercentOrLessSpaceNotifier(civicBody, capacity);
 
         parkingLot1.addNotifier(parkingFullNotifier);
         parkingLot1.addNotifier(singleSpaceNotifier);
         parkingLot1.addNotifier(parkCarNotifier);
         parkingLot1.addNotifier(unParkCarNotifier);
+        parkingLot1.addNotifier(eightyPercentOrMoreSpaceNotifier);
+        parkingLot1.addNotifier(twentyPercentOrLessSpaceNotifier);
 
         parkingLot2.addNotifier(parkingFullNotifier);
         parkingLot2.addNotifier(singleSpaceNotifier);
         parkingLot2.addNotifier(parkCarNotifier);
         parkingLot2.addNotifier(unParkCarNotifier);
+        parkingLot2.addNotifier(eightyPercentOrMoreSpaceNotifier);
+        parkingLot2.addNotifier(twentyPercentOrLessSpaceNotifier);
     }
 
     @Test
@@ -117,6 +125,69 @@ class ParkingLotTest {
     }
 
     @Test
+    void shouldNotifyAttendantWhenTheLotGot80PercentEmpty() {
+        MockAttendant mockAttendant = new MockAttendant();
+        int capacity = 10;
+        ParkingLot parkingLot = new ParkingLot(capacity);
+        parkingLot.addNotifier(new EightyPercentOrMoreSpaceNotifier(mockAttendant, parkingLot.CAPACITY));
+
+        Car car = new Car();
+        parkingLot.park(car);
+        parkingLot.park(new Car());
+
+        assertTrue(mockAttendant.isNotifyCalled);
+    }
+
+    @Test
+    void shouldNotifyAttendantWhenTheLotGotMoreThan80PercentEmpty() {
+        MockAttendant mockAttendant = new MockAttendant();
+        int capacity = 10;
+        ParkingLot parkingLot = new ParkingLot(capacity);
+        parkingLot.addNotifier(new EightyPercentOrMoreSpaceNotifier(mockAttendant, parkingLot.CAPACITY));
+
+        Car car = new Car();
+        parkingLot.park(car);
+
+        assertTrue(mockAttendant.isNotifyCalled);
+    }
+
+
+    @Test
+    void shouldNotifyCivicBodyWhenTheLotGot20PercentEmpty() {
+        MockCivicBody mockCivicBody = new MockCivicBody();
+        int capacity = 10;
+        ParkingLot parkingLot = new ParkingLot(capacity);
+        parkingLot.addNotifier(new TwentyPercentOrLessSpaceNotifier(mockCivicBody, parkingLot.CAPACITY));
+
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+
+        assertTrue(mockCivicBody.isNotifyCalled);
+    }
+
+    @Test
+    void shouldNotifyCivicBodyWhenTheLotGotLessThan20PercentEmpty() {
+        MockCivicBody mockCivicBody = new MockCivicBody();
+        int capacity = 4;
+        ParkingLot parkingLot = new ParkingLot(capacity);
+        parkingLot.addNotifier(new TwentyPercentOrLessSpaceNotifier (mockCivicBody, parkingLot.CAPACITY));
+
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+        parkingLot.park(new Car());
+
+        assertTrue(mockCivicBody.isNotifyCalled);
+    }
+
+
+    @Test
     void displayShouldPrintTheCurrentStatusOfParkingLotsToTheConsole() throws ParkingLotFullException {
         Display display = Display.create();
         parkingLot1.park(new Car());
@@ -125,6 +196,7 @@ class ParkingLotTest {
         System.out.println(display.toString());
     }
 }
+
 
 class MockAttendant extends Attendant {
     boolean isNotifyCalled = false;
@@ -137,6 +209,16 @@ class MockAttendant extends Attendant {
 
 
 class MockAssistant extends Assistant {
+    boolean isNotifyCalled = false;
+
+    @Override
+    public void notify(Notification notification, ParkingId id) {
+        this.isNotifyCalled = true;
+    }
+}
+
+
+class MockCivicBody extends CivicBody {
     boolean isNotifyCalled = false;
 
     @Override

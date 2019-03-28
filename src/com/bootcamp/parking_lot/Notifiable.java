@@ -87,3 +87,35 @@ class UnParkCarNotifier extends Notifiable {
         return isCarParked;
     }
 }
+
+
+class EightyPercentOrMoreSpaceNotifier extends Notifiable{
+    private static final Notification notification = new EightyPercentOrMoreSpaceNotification();
+    private Integer capacity;
+
+    EightyPercentOrMoreSpaceNotifier(Observer notifier, int capacity) {
+        super(notifier, notification);
+        this.capacity = capacity;
+    }
+
+    @Override
+    boolean isNotifiable(Map<Token, Car> cars) {
+        return (double)cars.size()/capacity <= 0.2;
+    }
+}
+
+
+class TwentyPercentOrLessSpaceNotifier extends Notifiable{
+    private static final Notification notification = new TwentyPercentOrLessSpaceNotification();
+    private Integer capacity;
+
+    TwentyPercentOrLessSpaceNotifier(Observer notifier, int capacity) {
+        super(notifier, notification);
+        this.capacity = capacity;
+    }
+
+    @Override
+    boolean isNotifiable(Map<Token, Car> cars) {
+        return (double)cars.size()/capacity >= 0.8;
+    }
+}

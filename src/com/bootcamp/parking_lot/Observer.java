@@ -39,3 +39,11 @@ class Attendant implements Observer {
     }
 }
 
+
+class CivicBody implements Observer {
+    @Override
+    public void notify(Notification notification, ParkingId id) {
+        System.out.println(notification.MESSAGE + " - " + id);
+    }
+}
+
